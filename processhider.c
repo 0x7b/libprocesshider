@@ -94,5 +94,22 @@ struct dirent* readdir(DIR *dirp)                                       \
     return dir;                                                         \
 }
 
+/*
+    LD_AUDIT较LD_PRELOAD更优先调用，属优化部分
+*/
+unsigned int la_version(unsigned int version){
+    return version;
+}
+unsigned int la_objopen(struct link_map *map,Lmid_t lmid,uintptr_t *cookie){
+    return LA_FLG_BINDTO | LA_FLG_BINDFROM;
+}
+uintptr_t la_symbind64(Elf64_Sym *sym,unsigned int ndx,uintptr_t *refcook,uintptr_t *defcook,unsigned int *flags,const char *symname){
+    if(strcmp(symname,"readdir")==0){
+        fprintf(stderr,"'readdir' is called,intercepting.\n");
+        return readdir;
+    }
+    return sym->st_value;
+}
+
 DECLARE_READDIR(dirent64, readdir64);
 DECLARE_READDIR(dirent, readdir);
